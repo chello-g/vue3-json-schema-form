@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, watchEffect } from 'vue'
 const PropType = {
   age: {
     type: Number,
@@ -20,7 +20,21 @@ export default defineComponent({
   name: 'HelloWorld',
   props: PropType,
   mounted() {
-    this.age
+    // this.age
+  },
+  setup(props, context) {
+    // setup第一个参数是props,是响应式的,不能使用es6解构,否则消除prop的响应式
+    // setup中第二个参数是一个普通JS对象,暴露了其他可能在setup中有用的值,它是一个普通的JS对象,不是响应式的。可以使用es6解构
+    console.log(props, context)
+    const nameRef = ref('myname')
+    // setInterval(() => {
+    //   nameRef.value += '2'
+    // }, 500)
+    watchEffect(() => {
+      // 所依赖的值变化后就会执行。在这里，依赖nameRef.value，所以当nameRef.value变化的时候，就会打印
+      // 感觉有点像vue2中的computed
+      console.log(nameRef.value)
+    })
   }
 })
 </script>
