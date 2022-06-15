@@ -1,11 +1,13 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld :age="20" />
+  <div id="#app">
+    <img alt="Vue logo" src="./assets/logo.png" />
+    <HelloWorld :age="20" />
+  </div>
 </template>
 
 <script lang="ts">
 // defineComponent 等api的定义可以在vue3源码https://github.com/vuejs/core中进行查看
-// defineComponent 定义在packages/runtime-core/src
+// defineComponent 定义在packages/runtime-core/src/apiDefineComponent.ts
 import { defineComponent } from 'vue'
 import HelloWorld from './components/HelloWorld.vue'
 
