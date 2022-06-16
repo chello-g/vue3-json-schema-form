@@ -30,3 +30,12 @@ cnpm install @vue/babel-plugin-jsx -D
 ```
 
 安装配置完之后就可以在 vue3 中添加 tsx 文件进行 tsx 语法开发了
+
+## 4. JSON-schema 使用
+
+```js
+cnpm install ajv  // 安装ajv
+cnpm install ajv-i18n // 安装ajv-i18n
+```
+
+创建`.eslintignore` 文件，忽略 schema-tests 文件夹下的 eslint 校验
