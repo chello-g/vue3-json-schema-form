@@ -1,6 +1,7 @@
 <template>
   <div class="hello">
-    <h1>{{ age }}</h1>
+    <h1 class="ageclass">{{ age }}</h1>
+    <p>{{ colorRef }}</p>
   </div>
 </template>
 
@@ -22,6 +23,11 @@ export default defineComponent({
   mounted() {
     // this.age
   },
+  data() {
+    return {
+      color: '#088dff'
+    }
+  },
   setup(props, context) {
     // setup第一个参数是props,是响应式的,不能使用es6解构,否则消除prop的响应式
     // setup中第二个参数是一个普通JS对象,暴露了其他可能在setup中有用的值,它是一个普通的JS对象,不是响应式的。可以使用es6解构
@@ -35,9 +41,22 @@ export default defineComponent({
       // 感觉有点像vue2中的computed
       console.log(nameRef.value)
     })
+    const colorRef = ref('#ccc')
+    setInterval(() => {
+      colorRef.value = '#088dff'
+    }, 3000)
+    return {
+      colorRef
+    }
   }
 })
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped>
+.ageclass {
+  /* vue3新增：单文件组件状态驱动的 CSS 变量 (<style> 中的 v-bind) */
+  /* color: v-bind(color); */
+  color: v-bind(colorRef);
+}
+</style>
