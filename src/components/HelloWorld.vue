@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, watchEffect } from 'vue'
-const PropType = {
+const PropsType = {
   age: {
     type: Number,
     required: true
@@ -19,7 +19,7 @@ const PropType = {
 
 export default defineComponent({
   name: 'HelloWorld',
-  props: PropType,
+  props: PropsType,
   mounted() {
     // this.age
   },
