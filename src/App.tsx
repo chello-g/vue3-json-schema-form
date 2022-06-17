@@ -15,9 +15,9 @@ export default defineComponent({
     const state = reactive({
       name: 'aaa'
     })
-    setInterval(() => {
-      state.name += '2'
-    }, 1000)
+    // setInterval(() => {
+    //   state.name += '2'
+    // }, 1000)
     return () => {
       // vue中h函数的写法
       //   return h('div', { id: 'app' }, [
