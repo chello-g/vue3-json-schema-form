@@ -167,3 +167,28 @@ export interface UISchema extends VueJsonSchemaConfig {
 
 - lib 文件夹：业务
 - src 文件夹：案列
+
+# 9. 升级依赖
+
+使用`vue upgrade`命令升级依赖
+
+# 10. 使用 Monaco Editor 注意事项
+
+使用 Monaco Editor 需要使用它对应的 plugin
+安装
+
+```js
+cnpm install monaco-editor-webpack-plugin -D
+```
+
+在 vue.config.js 中配置
+
+```js
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
+
+module.exports = {
+  chainWebpack(config) {
+    config.plugin('monaco').use(new MonacoWebpackPlugin())
+  }
+}
+```
