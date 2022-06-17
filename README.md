@@ -162,3 +162,8 @@ export interface UISchema extends VueJsonSchemaConfig {
   }
 }
 ```
+
+# 8. 目录介绍
+
+- lib 文件夹：业务
+- src 文件夹：案列

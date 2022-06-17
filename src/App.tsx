@@ -1,40 +1,195 @@
-// 对比App.vue（vue自带的sfc写法）和App.tsx（jsx写法）的区别，两者实现的功能是一样的
-import { createApp, defineComponent, h, reactive } from 'vue'
-const img = require('./assets/logo.png') // eslint-disable-line
-// import HelloWorld from './components/HelloWorld.vue'
-import HelloWorld from './components/HelloWorld' // HelloWorld.tsx
+import { defineComponent, ref, Ref, reactive, watchEffect } from 'vue'
+import { createUseStyles } from 'vue-jss' // feat: cssinjs
 
-function renderHelloWorld(num: number) {
-  return <HelloWorld age={num} />
+import MonacoEditor from './components/MonacoEditor'
+
+import demos from './demos'
+
+import SchemaForm from '../lib'
+
+// TODO: 在lib中export
+type Schema = any
+type UISchema = any
+
+function toJson(data: any) {
+  return JSON.stringify(data, null, 2)
 }
 
-export default defineComponent({
-  // setup中没有this
-  setup() {
-    // 这是一个闭包，setup中的东西只在开始的时候渲染一次，state的初始值一直是aaa
-    const state = reactive({
-      name: 'aaa'
-    })
-    // setInterval(() => {
-    //   state.name += '2'
-    // }, 1000)
-    return () => {
-      // vue中h函数的写法
-      //   return h('div', { id: 'app' }, [
-      //     h('img', { alt: 'Vue logo', src: img }),
-      //     h('p', state.name)
-      //   ])
+// define class
+const useStyles = createUseStyles({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    width: '1200px',
+    margin: '0 auto'
+  },
+  menu: {
+    marginBottom: 20
+  },
+  code: {
+    width: 700,
+    flexShrink: 0
+  },
+  codePanel: {
+    minHeight: 400,
+    marginBottom: 20
+  },
+  uiAndValue: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    '& > *': {
+      width: '46%'
+    }
+  },
+  content: {
+    display: 'flex'
+  },
+  form: {
+    padding: '0 20px',
+    flexGrow: 1
+  },
+  menuButton: {
+    appearance: 'none',
+    borderWidth: 0,
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    display: 'inline-block',
+    padding: 15,
+    borderRadius: 5,
+    '&:hover': {
+      background: '#efefef'
+    }
+  },
+  menuSelected: {
+    background: '#337ab7',
+    color: '#fff',
+    '&:hover': {
+      background: '#337ab7'
+    }
+  }
+})
 
-      // 添加了可编译jsx写法的插件vue/babel-plugin-jsx之后jsx的写法
+export default defineComponent({
+  setup() {
+    const selectedRef: Ref<number> = ref(0)
+
+    const demo: {
+      schema: Schema | null
+      data: any
+      uiSchema: UISchema | null
+      schemaCode: string
+      dataCode: string
+      uiSchemaCode: string
+    } = reactive({
+      schema: null,
+      data: {},
+      uiSchema: {},
+      schemaCode: '',
+      dataCode: '',
+      uiSchemaCode: ''
+    })
+
+    watchEffect(() => {
+      const index = selectedRef.value
+      const d = demos[index]
+      demo.schema = d.schema
+      demo.data = d.default
+      demo.uiSchema = d.uiSchema
+      demo.schemaCode = toJson(d.schema)
+      demo.dataCode = toJson(d.default)
+      demo.uiSchemaCode = toJson(d.uiSchema)
+    })
+
+    const methodRef: Ref<any> = ref()
+
+    const classesRef = useStyles()
+
+    const handleChange = (v: any) => {
+      demo.data = v
+      demo.dataCode = toJson(v)
+    }
+
+    function handleCodeChange(
+      filed: 'schema' | 'data' | 'uiSchema',
+      value: string
+    ) {
+      try {
+        const json = JSON.parse(value)
+        demo[filed] = json
+        ;(demo as any)[`${filed}Code`] = value
+      } catch (err) {
+        // some thing
+      }
+    }
+
+    const handleSchemaChange = (v: string) => handleCodeChange('schema', v)
+    const handleDataChange = (v: string) => handleCodeChange('data', v)
+    const handleUISchemaChange = (v: string) => handleCodeChange('uiSchema', v)
+
+    return () => {
+      const classes = classesRef.value
+      const selected = selectedRef.value
+
+      console.log(methodRef)
+
       return (
-        <div id="app">
-          <img alt="Vue logo" src={img} />
-          <p>{state.name}</p>
-          {/* age在props中写了required:true，在这里如果不写age传参在编译的时候会提示，但是sfc写法，写在模板里，在编译的时候就不会报错 */}
-          {/* 在编译的时候可以识别错误，但是vscode编辑器却不能识别，主要是ts不能很好支持vue语法，vue文件导出类型可以在shims-vue.d.ts中定义.所以最好使用tsx文件代替vue文件 */}
-          {/* <HelloWorld  /> */}
-          {renderHelloWorld(12)}
+        // <StyleThemeProvider>
+        // <VJSFThemeProvider theme={theme as any}>
+        <div class={classes.container}>
+          <div class={classes.menu}>
+            <h1>Vue3 JsonSchema Form</h1>
+            <div>
+              {demos.map((demo, index) => (
+                <button
+                  class={{
+                    [classes.menuButton]: true,
+                    [classes.menuSelected]: index === selected
+                  }}
+                  onClick={() => (selectedRef.value = index)}
+                >
+                  {demo.name}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div class={classes.content}>
+            <div class={classes.code}>
+              <MonacoEditor
+                code={demo.schemaCode}
+                class={classes.codePanel}
+                onChange={handleSchemaChange}
+                title="Schema"
+              />
+              <div class={classes.uiAndValue}>
+                <MonacoEditor
+                  code={demo.uiSchemaCode}
+                  class={classes.codePanel}
+                  onChange={handleUISchemaChange}
+                  title="UISchema"
+                />
+                <MonacoEditor
+                  code={demo.dataCode}
+                  class={classes.codePanel}
+                  onChange={handleDataChange}
+                  title="Value"
+                />
+              </div>
+            </div>
+            <div class={classes.form}>
+              <SchemaForm />
+              {/* <SchemaForm
+                schema={demo.schema!}
+                uiSchema={demo.uiSchema!}
+                onChange={handleChange}
+                contextRef={methodRef}
+                value={demo.data}
+              /> */}
+            </div>
+          </div>
         </div>
+        // </VJSFThemeProvider>
+        // </StyleThemeProvider>
       )
     }
   }
