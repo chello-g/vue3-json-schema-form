@@ -99,6 +99,7 @@ export default defineComponent({
       demo.schemaCode = toJson(d.schema)
       demo.dataCode = toJson(d.default)
       demo.uiSchemaCode = toJson(d.uiSchema)
+      console.log('demo----->', demo)
     })
 
     const methodRef: Ref<any> = ref()

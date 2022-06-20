@@ -12,10 +12,42 @@ export default {
       lastName: {
         type: 'string'
       },
-      telephone: {
-        type: 'string',
-        minLength: 10
+      // telephone: {
+      //   type: 'string',
+      //   minLength: 10
+      // },
+      staticArray: {
+        type: 'array',
+        items: [
+          {
+            type: 'string'
+          },
+          {
+            type: 'number'
+          }
+        ]
+      },
+      singleTypeArray: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string'
+            },
+            age: {
+              type: 'number'
+            }
+          }
+        }
       }
+      // multiSelectArray: {
+      //   type: 'array',
+      //   items: {
+      //     type: 'string',
+      //     enum: ['123', '456', '789']
+      //   }
+      // }
     }
   },
   uiSchema: {
@@ -35,8 +67,7 @@ export default {
   default: {
     firstName: 'Chuck',
     lastName: 'Norris',
-    age: 75,
-    bio: 'Roundhouse kicking asses since 1940',
-    password: 'noneed'
+    staticArray: ['stringaaa', 1234],
+    singleTypeArray: [{ name: 'aaa', age: 12 }]
   }
 }
